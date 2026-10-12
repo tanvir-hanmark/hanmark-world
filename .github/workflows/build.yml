@@ -29,6 +29,16 @@ jobs:
 
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace
+        - name: Inspect APK (diagnostic)
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          AAPT2=$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -1)
+          echo "=== BADGING ==="
+          "$AAPT2" dump badging "$APK" | grep -E "package:|sdkVersion|targetSdkVersion|launchable-activity|application-label:" || true
+          echo "=== APK FILES ==="
+          unzip -l "$APK" | grep -E "classes.*dex|AndroidManifest.xml" || true
+          echo "=== MainActivity check ==="
+          unzip -p "$APK" 'classes*.dex' | grep -a -c "com/hanmark/world/MainActivity" || true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
