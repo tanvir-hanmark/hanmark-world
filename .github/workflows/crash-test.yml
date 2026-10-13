@@ -1,4 +1,4 @@
-name: Emulator Crash Test
+name: HanMark Emulator Crash Test
 
 on:
   workflow_dispatch:
